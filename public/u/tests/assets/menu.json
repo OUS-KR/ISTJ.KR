@@ -15,5 +15,16 @@
         "description": "오늘의 추천 게임"
       }
     ]
+  },
+  {
+    "mainTitle": "정보",
+    "items": [
+      {
+        "title": "ISTJ 특징 분석: 청렴결백한 논리주의자",
+        "url": "/u/tests/info-characteristics/",
+        "type": "정보",
+        "description": "ISTJ의 핵심 특징, 장단점, 성장 방법"
+      }
+    ]
   }
 ]
