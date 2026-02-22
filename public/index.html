@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISTJ — istj.kr</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* Slate — deep, reserved, internal */
+      --color-slate-50:  #f4f5f6;
+      --color-slate-100: #e4e7ea;
+      --color-slate-200: #c8cdd4;
+      --color-slate-300: #a2aab5;
+      --color-slate-400: #7a8695;
+      --color-slate-500: #586475;
+      --color-slate-600: #404e5e;
+      --color-slate-700: #2e3a47;
+      --color-slate-800: #1e2830;
+      --color-slate-900: #111820;
+      --color-slate-950: #090d12;
+
+      /* Olive — duty, earth, patience */
+      --color-olive-200: #d4d5a8;
+      --color-olive-300: #b8ba7a;
+      --color-olive-400: #969858;
+      --color-olive-500: #74763c;
+      --color-olive-600: #545628;
+
+      /* Parchment — aged paper, archive, memory */
+      --color-parch-100: #f5f0e8;
+      --color-parch-200: #e8e0cc;
+      --color-parch-300: #d4c8a8;
+      --color-parch-400: #b8a880;
+      --color-parch-500: #9a8860;
+
+      /* Rust — quiet urgency, duty mark */
+      --color-rust-400: #b05840;
+      --color-rust-500: #8c4028;
+
+      --font-mono:  "IBM Plex Mono", "Courier New", monospace;
+      --font-serif: "Libre Baskerville", Georgia, serif;
+      --font-body:  "DM Sans", system-ui, sans-serif;
+    }
+
+    @layer base {
+      *, *::before, *::after { box-sizing: border-box; }
+      html {
+        scroll-behavior: smooth;
+        background-color: var(--color-slate-950);
+        color: var(--color-slate-200);
+      }
+      body {
+        font-family: var(--font-body);
+        font-weight: 300;
+        overflow-x: hidden;
+      }
+      ::selection {
+        background-color: var(--color-olive-500);
+        color: var(--color-parch-100);
+      }
+      ::-webkit-scrollbar { width: 3px; }
+      ::-webkit-scrollbar-track { background: var(--color-slate-950); }
+      ::-webkit-scrollbar-thumb { background: rgba(148, 152, 88, 0.4); }
+    }
+
+    /* ── Canvas & Overlays ── */
+    #archive-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.38;
+    }
+
+    /* Film grain texture */
+    .grain-overlay {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+
+    /* Subtle ruled-paper lines */
+    .ruled-overlay {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 31px,
+        rgba(148, 152, 88, 0.04) 31px,
+        rgba(148, 152, 88, 0.04) 32px
+      );
+    }
+
+    .vignette {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(9, 13, 18, 0.9) 100%);
+    }
+
+    /* ── Site Wrapper ── */
+    .site-wrapper {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .glass-header {
+      position: sticky; top: 0;
+      backdrop-filter: blur(18px) saturate(1.2);
+      background: rgba(9, 13, 18, 0.82);
+      border-bottom: 1px solid rgba(148, 152, 88, 0.12);
+      z-index: 100;
+    }
+
+    .logo-istj {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      color: var(--color-olive-300);
+      text-decoration: none;
+      position: relative;
+    }
+    .logo-istj::before {
+      content: '> ';
+      color: var(--color-slate-500);
+      font-weight: 300;
+    }
+
+    .nav-link {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--color-slate-400);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-link::before {
+      content: '# ';
+      color: var(--color-slate-600);
+    }
+    .nav-link:hover { color: var(--color-olive-300); }
+
+    .domain-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--color-slate-500);
+      border: 1px solid rgba(148, 152, 88, 0.2);
+      padding: 3px 10px;
+    }
+
+    /* ── Hero ── */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      font-size: clamp(18vw, 28vw, 38vw);
+      font-weight: 300;
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(148, 152, 88, 0.06);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      letter-spacing: 0.08em;
+    }
+
+    /* Typewriter cursor blink */
+    .cursor-blink {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--color-olive-400);
+      margin-left: 3px;
+      vertical-align: text-bottom;
+      animation: cursor-flash 1.1s step-end infinite;
+    }
+    @keyframes cursor-flash {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .logistician-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      color: var(--color-olive-400);
+      border: 1px solid rgba(148, 152, 88, 0.35);
+      padding: 5px 14px;
+      margin-bottom: 2.8rem;
+    }
+    .logistician-badge::before {
+      content: '▸';
+      color: var(--color-olive-500);
+      font-size: 0.7rem;
+    }
+
+    .logo-display {
+      font-family: var(--font-mono);
+      font-size: clamp(4.5rem, 14vw, 12rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      color: var(--color-slate-100);
+      position: relative;
+      animation: type-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes type-reveal {
+      from { opacity: 0; transform: translateY(24px); filter: blur(4px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+
+    .logo-sub {
+      font-family: var(--font-mono);
+      font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--color-slate-500);
+      margin-top: 0.6rem;
+      animation: fade-up 1s 0.4s both;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-serif);
+      font-size: clamp(0.95rem, 2.2vw, 1.45rem);
+      font-weight: 400;
+      color: var(--color-slate-300);
+      letter-spacing: 0.05em;
+      margin-top: 2rem;
+      animation: fade-up 1s 0.35s both;
+    }
+
+    .divider-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 2rem auto;
+      animation: fade-up 1s 0.5s both;
+    }
+    .divider-dots span {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--color-slate-600);
+    }
+    .divider-dots span:nth-child(2) { background: var(--color-olive-500); }
+    .divider-line-side {
+      width: 40px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-slate-700));
+    }
+    .divider-line-side.right {
+      background: linear-gradient(90deg, var(--color-slate-700), transparent);
+    }
+
+    .hero-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(0.85rem, 1.7vw, 1rem);
+      color: var(--color-slate-500);
+      max-width: 440px;
+      line-height: 1.9;
+      animation: fade-up 1s 0.6s both;
+    }
+
+    .trait-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      padding: 4px 12px;
+      border: 1px solid rgba(148, 152, 88, 0.18);
+      color: var(--color-slate-400);
+      transition: all 0.25s;
+      cursor: default;
+    }
+    .trait-pill:hover {
+      color: var(--color-olive-300);
+      border-color: rgba(148, 152, 88, 0.5);
+      background: rgba(148, 152, 88, 0.05);
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: var(--color-parch-100);
+      background: transparent;
+      border: 1px solid rgba(148, 152, 88, 0.45);
+      padding: 14px 38px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(148, 152, 88, 0.08);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+    .cta-btn:hover::before { transform: translateX(0); }
+    .cta-btn:hover {
+      border-color: rgba(148, 152, 88, 0.8);
+      color: var(--color-olive-200);
+    }
+
+    .scroll-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4.5rem;
+      animation: fade-up 1s 1.2s both;
+    }
+    .scroll-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--color-slate-700);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--color-olive-600), transparent);
+      animation: scroll-fall 2.4s ease-in-out infinite;
+    }
+    @keyframes scroll-fall {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── Stats Row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid rgba(148, 152, 88, 0.09);
+      border-bottom: 1px solid rgba(148, 152, 88, 0.09);
+    }
+    .stat-cell {
+      padding: 2.8rem 2rem;
+      text-align: center;
+      border-right: 1px solid rgba(148, 152, 88, 0.09);
+      transition: background 0.3s;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-cell:hover { background: rgba(148, 152, 88, 0.035); }
+    .stat-number {
+      font-family: var(--font-mono);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 500;
+      color: var(--color-olive-300);
+      letter-spacing: 0.08em;
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--color-slate-600);
+      margin-top: 7px;
+    }
+
+    /* ── Letter Blocks ── */
+    .letters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(148, 152, 88, 0.09);
+    }
+    .letter-block {
+      padding: 3.5rem 1.5rem;
+      border-right: 1px solid rgba(148, 152, 88, 0.09);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .letter-block:last-child { border-right: none; }
+    .letter-block::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    .letter-block:hover::after { transform: scaleX(1); }
+    .letter-block:hover { background: rgba(148, 152, 88, 0.03); }
+
+    .l-i::after { background: linear-gradient(90deg, var(--color-slate-400), transparent); }
+    .l-s::after { background: linear-gradient(90deg, var(--color-olive-400), transparent); }
+    .l-t::after { background: linear-gradient(90deg, var(--color-parch-400), transparent); }
+    .l-j::after { background: linear-gradient(90deg, var(--color-rust-400), transparent); }
+
+    .letter-char {
+      font-family: var(--font-mono);
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+    .l-i .letter-char { color: var(--color-slate-300); }
+    .l-s .letter-char { color: var(--color-olive-300); }
+    .l-t .letter-char { color: var(--color-parch-300); }
+    .l-j .letter-char { color: var(--color-rust-400); }
+
+    .letter-word {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      color: var(--color-slate-600);
+      margin-top: 7px;
+    }
+    .letter-desc {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.82rem;
+      color: var(--color-slate-500);
+      margin-top: 9px;
+      line-height: 1.6;
+    }
+
+    /* ── Section Shared ── */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.32em;
+      color: var(--color-olive-500);
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      color: var(--color-slate-100);
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    /* ── Archive Cards ── */
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: rgba(148, 152, 88, 0.07);
+    }
+    .archive-card {
+      background: var(--color-slate-950);
+      padding: 3rem 2.6rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .archive-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.45s ease;
+    }
+    .archive-card:hover { background: rgba(148, 152, 88, 0.03); }
+    .archive-card:hover::before { transform: scaleX(1); }
+
+    .card-slate::before { background: linear-gradient(90deg, var(--color-slate-400), transparent); }
+    .card-olive::before { background: linear-gradient(90deg, var(--color-olive-400), transparent); }
+    .card-parch::before { background: linear-gradient(90deg, var(--color-parch-400), transparent); }
+
+    .card-index {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 1.2rem;
+    }
+    .card-slate .card-index { color: var(--color-slate-600); }
+    .card-olive .card-index { color: var(--color-olive-600); }
+    .card-parch .card-index { color: var(--color-parch-500); }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1.4rem;
+      display: block;
+    }
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .card-slate .card-title { color: var(--color-slate-200); }
+    .card-olive .card-title { color: var(--color-olive-300); }
+    .card-parch .card-title { color: var(--color-parch-300); }
+
+    .card-desc {
+      font-family: var(--font-body);
+      font-size: 0.86rem;
+      line-height: 1.8;
+      color: var(--color-slate-500);
+      font-weight: 300;
+    }
+
+    /* ── Ledger Box ── */
+    .ledger-box {
+      border: 1px solid rgba(148, 152, 88, 0.15);
+      position: relative;
+    }
+    .ledger-label {
+      position: absolute; top: -0.65rem; left: 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--color-olive-500);
+      background: var(--color-slate-950);
+      padding: 0 8px;
+    }
+
+    /* Table-style rows */
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      align-items: start;
+      gap: 0;
+      border-bottom: 1px solid rgba(148, 152, 88, 0.07);
+    }
+    .ledger-row:last-child { border-bottom: none; }
+
+    .ledger-num {
+      padding: 1.5rem 1rem 1.5rem 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 400;
+      color: var(--color-slate-700);
+      border-right: 1px solid rgba(148, 152, 88, 0.07);
+      line-height: 1;
+      padding-top: 1.6rem;
+    }
+    .ledger-content {
+      padding: 1.4rem 2rem 1.4rem 1.6rem;
+    }
+    .ledger-key {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--color-slate-300);
+      margin-bottom: 5px;
+    }
+    .ledger-val {
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      line-height: 1.75;
+      color: var(--color-slate-500);
+      font-weight: 300;
+    }
+
+    /* ── Origin ── */
+    .origin-text {
+      font-family: var(--font-serif);
+      font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+      line-height: 2.1;
+      color: var(--color-slate-500);
+      font-weight: 400;
+    }
+    .origin-text em {
+      font-style: italic;
+      color: var(--color-olive-300);
+    }
+
+    /* ── Contact ── */
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: clamp(1.1rem, 2.8vw, 2rem);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--color-olive-300);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(148, 152, 88, 0.25);
+      padding-bottom: 4px;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .contact-link:hover {
+      color: var(--color-olive-200);
+      border-bottom-color: rgba(148, 152, 88, 0.7);
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      padding: 2.5rem 3rem;
+      border-top: 1px solid rgba(148, 152, 88, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: var(--color-slate-700);
+    }
+
+    /* ── Animations ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up  { animation: fade-up 0.9s ease both; }
+    .delay-1  { animation-delay: 0.1s; }
+    .delay-2  { animation-delay: 0.25s; }
+    .delay-3  { animation-delay: 0.4s; }
+    .delay-4  { animation-delay: 0.55s; }
+    .delay-5  { animation-delay: 0.7s; }
+    .delay-6  { animation-delay: 0.9s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .letters-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-row    { grid-template-columns: repeat(3, 1fr); }
+      .site-footer  { flex-direction: column; text-align: center; }
+      .ledger-box   { margin: 0 1rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="archive-canvas"></canvas>
+  <div class="grain-overlay"  aria-hidden="true"></div>
+  <div class="ruled-overlay"  aria-hidden="true"></div>
+  <div class="vignette"       aria-hidden="true"></div>
+
+  <div class="site-wrapper">
+
+    <!-- ══════════════ HEADER ══════════════ -->
+    <header class="glass-header flex items-center justify-between px-8 py-5">
+      <a href="/" class="logo-istj">ISTJ</a>
+      <nav class="hidden sm:flex gap-10">
+        <a href="#letters"  class="nav-link">letters</a>
+        <a href="#archive"  class="nav-link">archive</a>
+        <a href="#contact"  class="nav-link">contact</a>
+      </nav>
+      <div class="domain-badge hidden sm:block">istj.kr</div>
+    </header>
+
+    <main>
+
+      <!-- ══════════════ HERO ══════════════ -->
+      <section class="hero-section">
+        <div class="hero-bg-text" aria-hidden="true">ISTJ</div>
+
+        <div class="logistician-badge fade-up">The Logistician</div>
+
+        <h1 class="logo-display">
+          ISTJ<span class="cursor-blink" aria-hidden="true"></span>
+        </h1>
+        <p class="logo-sub">INTROVERTED · SENSING · THINKING · JUDGING</p>
+
+        <p class="hero-tagline fade-up delay-2">의무를 기억하고, 침묵 속에 완성한다</p>
+
+        <div class="divider-dots fade-up delay-3">
+          <div class="divider-line-side"></div>
+          <span></span><span></span><span></span>
+          <div class="divider-line-side right"></div>
+        </div>
+
+        <p class="hero-quote fade-up delay-3">
+          "The archive does not boast —<br />
+          it simply holds everything<br />
+          that was ever trusted to it."
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-3 mt-10 fade-up delay-4">
+          <span class="trait-pill">📋 Dutiful</span>
+          <span class="trait-pill">🔒 Reliable</span>
+          <span class="trait-pill">📐 Precise</span>
+          <span class="trait-pill">🗂️ Methodical</span>
+          <span class="trait-pill">⏱️ Consistent</span>
+        </div>
+
+        <div class="mt-12 fade-up delay-5">
+          <a href="#archive" class="cta-btn">
+            Open Archive <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <div class="scroll-indicator">
+          <span class="scroll-label">scroll</span>
+          <div class="scroll-line"></div>
+        </div>
+      </section>
+
+      <!-- ══════════════ STATS ══════════════ -->
+      <div class="stats-row">
+        <div class="stat-cell fade-up delay-1">
+          <div class="stat-number">11%</div>
+          <div class="stat-label">// of population</div>
+        </div>
+        <div class="stat-cell fade-up delay-2">
+          <div class="stat-number">Si</div>
+          <div class="stat-label">// dominant fn</div>
+        </div>
+        <div class="stat-cell fade-up delay-3">
+          <div class="stat-number">#1</div>
+          <div class="stat-label">// most common type</div>
+        </div>
+      </div>
+
+      <!-- ══════════════ LETTERS ══════════════ -->
+      <section id="letters">
+        <div class="letters-grid">
+          <div class="letter-block l-i">
+            <div class="letter-char">I</div>
+            <div class="letter-word">Introverted</div>
+            <div class="letter-desc">내면에서 힘을 얻고<br />혼자 깊이 사유한다</div>
+          </div>
+          <div class="letter-block l-s">
+            <div class="letter-char">S</div>
+            <div class="letter-word">Sensing</div>
+            <div class="letter-desc">현실의 사실과<br />기억을 신뢰한다</div>
+          </div>
+          <div class="letter-block l-t">
+            <div class="letter-char">T</div>
+            <div class="letter-word">Thinking</div>
+            <div class="letter-desc">감정보다 논리로<br />판단하고 결정한다</div>
+          </div>
+          <div class="letter-block l-j">
+            <div class="letter-char">J</div>
+            <div class="letter-word">Judging</div>
+            <div class="letter-desc">계획과 마감을 지키며<br />완수를 향해 나아간다</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ ARCHIVE SECTION ══════════════ -->
+      <section id="archive" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="mb-16 fade-up">
+          <div class="section-label mb-3">// core_attributes</div>
+          <div class="section-title">The Three Records<br />of the Logistician</div>
+        </div>
+
+        <div class="archive-grid fade-up delay-2">
+          <div class="archive-card card-slate">
+            <div class="card-index">FILE_01</div>
+            <span class="card-icon">🗄️</span>
+            <div class="card-title">Memory</div>
+            <p class="card-desc">
+              ISTJ의 지배 기능은 내향 감각(Si)이다. 이는 단순한 기억력이 아니라, 과거의 경험을 정밀하게 내면에 축적하고 현재의 판단에 활용하는 능력이다. 그들은 이미 일어난 일, 검증된 방법, 실제 작동한 체계를 신뢰한다. 역사는 그들에게 단순한 과거가 아니라 가장 신뢰할 수 있는 데이터베이스다.
+            </p>
+          </div>
+          <div class="archive-card card-olive">
+            <div class="card-index">FILE_02</div>
+            <span class="card-icon">⚖️</span>
+            <div class="card-title">Duty</div>
+            <p class="card-desc">
+              ISTJ는 의무를 철학이 아닌 행동으로 이해한다. 약속은 반드시 지켜지고, 맡은 일은 완수되어야 하며, 기대된 것은 반드시 실현된다. 이 강력한 의무감은 자신에게도 타인에게도 동일하게 적용된다. 그들의 신뢰성은 우연이 아닌 의지적 선택의 산물이다.
+            </p>
+          </div>
+          <div class="archive-card card-parch">
+            <div class="card-index">FILE_03</div>
+            <span class="card-icon">🔍</span>
+            <div class="card-title">Precision</div>
+            <p class="card-desc">
+              세부 사항에 대한 집요한 주의가 ISTJ를 Inspector로 만든다. 오류를 발견하고, 불일치를 식별하며, 기준에서 벗어난 것을 교정하는 능력은 타고난 것이다. 이 정밀함은 단순한 완벽주의가 아니라, 사물이 올바르게 작동해야 한다는 깊은 내적 확신에서 비롯된다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ LEDGER BOX ══════════════ -->
+      <section class="py-10 px-6 max-w-6xl mx-auto">
+        <div class="ledger-box fade-up">
+          <span class="ledger-label">LOGISTICIAN_PROFILE.log</span>
+          <div class="ledger-row">
+            <div class="ledger-num">L01</div>
+            <div class="ledger-content">
+              <div class="ledger-key">RELIABILITY AS IDENTITY</div>
+              <div class="ledger-val">
+                ISTJ에게 신뢰할 수 있다는 것은 평판이 아니라 정체성이다. 그들은 약속한 것을 지키지 못할 때 깊은 내적 불편함을 느낀다. 이 일관성은 주변 사람들에게 안정감을 제공하며, 위기 상황에서 ISTJ가 자연스럽게 기댈 수 있는 존재가 되는 이유다.
+              </div>
+            </div>
+          </div>
+          <div class="ledger-row">
+            <div class="ledger-num">L02</div>
+            <div class="ledger-content">
+              <div class="ledger-key">QUIET STRENGTH</div>
+              <div class="ledger-val">
+                ISTJ는 과시하지 않는다. 그들의 힘은 조용하고 꾸준하며 축적된다. 화려한 선언보다 묵묵한 실행을 선택하며, 결과로만 말한다. 존재 자체가 일관성의 증거가 되는 유형이다.
+              </div>
+            </div>
+          </div>
+          <div class="ledger-row">
+            <div class="ledger-num">L03</div>
+            <div class="ledger-content">
+              <div class="ledger-key">TRADITION AS WISDOM</div>
+              <div class="ledger-val">
+                검증되지 않은 새로운 것보다 오래된 것 중 효과가 입증된 것을 선호한다. 전통은 단순한 관습이 아니라 수많은 실패와 성공이 축적된 집단 지성이다. ISTJ는 이 축적된 지혜를 직관적으로 존중한다.
+              </div>
+            </div>
+          </div>
+          <div class="ledger-row">
+            <div class="ledger-num">L04</div>
+            <div class="ledger-content">
+              <div class="ledger-key">SOLITUDE AS MAINTENANCE</div>
+              <div class="ledger-val">
+                혼자만의 시간은 ISTJ에게 회복이 아니라 필수적인 유지보수다. 내면에서 정보를 처리하고, 경험을 분류하며, 다음 행동을 계획한다. 고요함 속에서 가장 명료하게 사고한다.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ ORIGIN ══════════════ -->
+      <section class="py-20 px-6 max-w-4xl mx-auto text-center">
+        <div class="section-label mb-6 fade-up">// about</div>
+        <p class="origin-text fade-up delay-1">
+          <em>ISTJ</em>는 Myers-Briggs 16개 유형 중 가장 흔한 유형 중 하나로,
+          전체 인구의 약 <em>11~14%</em>를 차지한다.
+          <em>Logistician</em> 혹은 <em>Inspector</em>라 불리며,
+          조용하고 진지하며 철저한 책임감으로 성공을 만들어낸다.
+          실용적이고, 사실에 근거하며, 현실적이고 신중하다.
+          해야 할 일을 논리적으로 결정하고, 방해물에 흔들리지 않으며 끝까지 완수한다.
+          <em>의무</em>, <em>기억</em>, <em>정밀함</em> —
+          세 가지가 ISTJ라는 아카이브를 구성하는 핵심 파일이다.
+        </p>
+      </section>
+
+      <!-- ══════════════ CONTACT ══════════════ -->
+      <section id="contact" class="py-24 px-6 text-center"
+        style="border-top: 1px solid rgba(148,152,88,0.09);">
+        <div class="section-label mb-6 fade-up">// contact</div>
+        <div class="section-title mb-10 fade-up delay-1">Get in Touch</div>
+        <a href="mailto:hello@istj.kr" class="contact-link fade-up delay-2">
+          hello@istj.kr
+        </a>
+        <p class="mt-8 fade-up delay-3"
+          style="font-family: var(--font-mono); font-size: 0.65rem;
+                 letter-spacing: 0.2em; color: var(--color-slate-700);">
+          // quiet. precise. dependable.
+        </p>
+      </section>
+
+    </main>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer class="site-footer">
+      <span class="footer-copy">© 2026 istj.kr — All rights reserved.</span>
+      <span class="footer-copy" style="opacity:0.5;">
+        duty · memory · precision · silence
+      </span>
+    </footer>
+
+  </div><!-- /site-wrapper -->
+
+  <!-- ══════════════ PARTICLE SCRIPT ══════════════ -->
+  <script>
+    (() => {
+      const canvas = document.getElementById('archive-canvas');
+      const ctx    = canvas.getContext('2d');
+
+      const OLIVE  = 'rgba(148, 152, 88,';
+      const SLATE  = 'rgba(90,  100, 117,';
+      const PARCH  = 'rgba(180, 168, 128,';
+      const RUST   = 'rgba(176,  88,  64,';
+
+      let W, H;
+      const resize = () => {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      };
+      window.addEventListener('resize', () => { resize(); rebuildAll(); });
+      resize();
+
+      // ═══ 1. TypewriterChar — floating monospace characters ═══
+      const CHARS = '01ISTJLOG#:/_.;[]{}=>+-|%@DUTY';
+      class TypewriterChar {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+          this.x    = Math.random() * W;
+          this.y    = init ? Math.random() * H : -20;
+          this.char = CHARS[Math.floor(Math.random() * CHARS.length)];
+          this.size = Math.random() * 9 + 7;
+          this.vy   = Math.random() * 0.25 + 0.06;
+          this.vx   = (Math.random() - 0.5) * 0.08;
+          this.life    = 0;
+          this.maxLife = Math.random() * 400 + 250;
+          this.color   = Math.random() < 0.5 ? OLIVE : (Math.random() < 0.5 ? SLATE : PARCH);
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.life++;
+          if (this.y > H + 20 || this.life > this.maxLife) this.reset();
+        }
+        draw() {
+          const t = this.life / this.maxLife;
+          const a = t < 0.1 ? t / 0.1 : t > 0.88 ? (1 - t) / 0.12 : 1;
+          ctx.font         = `300 ${this.size}px "IBM Plex Mono", monospace`;
+          ctx.fillStyle    = this.color + (a * 0.22) + ')';
+          ctx.textAlign    = 'center';
+          ctx.fillText(this.char, this.x, this.y);
+        }
+      }
+
+      // ═══ 2. RuledLine — horizontal document lines drifting up ═══
+      class RuledLine {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+          this.y    = init ? Math.random() * H : H + 5;
+          this.x0   = Math.random() * W * 0.3;
+          this.x1   = this.x0 + Math.random() * W * 0.6 + W * 0.1;
+          this.vy   = -(Math.random() * 0.18 + 0.04);
+          this.life    = 0;
+          this.maxLife = Math.random() * 500 + 300;
+          this.width   = Math.random() * 0.5 + 0.15;
+          this.color   = Math.random() < 0.6 ? OLIVE : SLATE;
+        }
+        update() {
+          this.y += this.vy;
+          this.life++;
+          if (this.y < -5 || this.life > this.maxLife) this.reset();
+        }
+        draw() {
+          const t = this.life / this.maxLife;
+          const a = t < 0.12 ? t / 0.12 : t > 0.88 ? (1 - t) / 0.12 : 1;
+          ctx.beginPath();
+          ctx.moveTo(this.x0, this.y);
+          ctx.lineTo(this.x1, this.y);
+          ctx.strokeStyle = this.color + (a * 0.18) + ')';
+          ctx.lineWidth   = this.width;
+          ctx.stroke();
+        }
+      }
+
+      // ═══ 3. DustMote — tiny floating particles ═══
+      class DustMote {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+          this.x    = Math.random() * W;
+          this.y    = init ? Math.random() * H : H + 5;
+          this.r    = Math.random() * 1.2 + 0.2;
+          this.vy   = -(Math.random() * 0.2 + 0.04);
+          this.vx   = (Math.random() - 0.5) * 0.12;
+          this.life    = 0;
+          this.maxLife = Math.random() * 600 + 350;
+          this.color   = Math.random() < 0.55 ? PARCH : (Math.random() < 0.5 ? OLIVE : SLATE);
+        }
+        update() {
+          this.x += this.vx + Math.sin(this.life * 0.018) * 0.12;
+          this.y += this.vy;
+          this.life++;
+          if (this.y < -5 || this.life > this.maxLife) this.reset();
+        }
+        draw() {
+          const t = this.life / this.maxLife;
+          const a = t < 0.08 ? t / 0.08 : t > 0.9 ? (1 - t) / 0.1 : 1;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = this.color + (a * 0.38) + ')';
+          ctx.fill();
+        }
+      }
+
+      // ═══ 4. GridTick — small cross-tick marks at grid intersections ═══
+      class GridTick {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+          const g  = 48;
+          this.x   = Math.floor(Math.random() * Math.ceil(W / g)) * g;
+          this.y   = Math.floor(Math.random() * Math.ceil(H / g)) * g;
+          this.sz  = Math.random() * 4 + 2;
+          this.life    = 0;
+          this.maxLife = Math.random() * 220 + 120;
+          this.delay   = init ? Math.floor(Math.random() * 200) : 0;
+          this.color   = Math.random() < 0.6 ? OLIVE : SLATE;
+        }
+        update() {
+          if (this.delay > 0) { this.delay--; return; }
+          this.life++;
+          if (this.life > this.maxLife) this.reset();
+        }
+        draw() {
+          if (this.delay > 0) return;
+          const t = this.life / this.maxLife;
+          const a = t < 0.15 ? t / 0.15 : t > 0.85 ? (1 - t) / 0.15 : 1;
+          ctx.strokeStyle = this.color + (a * 0.32) + ')';
+          ctx.lineWidth   = 0.7;
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.sz, this.y);
+          ctx.lineTo(this.x + this.sz, this.y);
+          ctx.moveTo(this.x, this.y - this.sz);
+          ctx.lineTo(this.x, this.y + this.sz);
+          ctx.stroke();
+        }
+      }
+
+      // ── Pools ──
+      let chars, lines, motes, ticks;
+      const rebuildAll = () => {
+        chars = Array.from({ length: 32 }, () => new TypewriterChar());
+        lines = Array.from({ length: 22 }, () => new RuledLine());
+        motes = Array.from({ length: 48 }, () => new DustMote());
+        ticks = Array.from({ length: 38 }, () => new GridTick());
+      };
+      rebuildAll();
+
+      // ── Loop ──
+      const loop = () => {
+        ctx.clearRect(0, 0, W, H);
+        lines.forEach(p => { p.update(); p.draw(); });
+        ticks.forEach(p => { p.update(); p.draw(); });
+        motes.forEach(p => { p.update(); p.draw(); });
+        chars.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(loop);
+      };
+      loop();
+    })();
+  </script>
+
+</body>
+</html>
