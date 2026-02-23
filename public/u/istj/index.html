@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISTJ — istj.kr</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-navy-50:  #f0f4f8;
+      --color-navy-100: #d9e4ef;
+      --color-navy-200: #b3c9df;
+      --color-navy-300: #7da4c4;
+      --color-navy-400: #4d7fa8;
+      --color-navy-500: #2f618a;
+      --color-navy-600: #234d72;
+      --color-navy-700: #1d3d5c;
+      --color-navy-800: #18314b;
+      --color-navy-900: #142840;
+      --color-navy-950: #0b1828;
+
+      --color-brass-300: #e8d5a3;
+      --color-brass-400: #d4b870;
+      --color-brass-500: #b8962e;
+      --color-brass-600: #9a7a1e;
+
+      --color-ledger-400: #6ee7b7;
+      --color-ledger-500: #34d399;
+      --color-ledger-600: #10b981;
+
+      --color-stone-300: #cbd5e1;
+      --color-stone-400: #94a3b8;
+      --color-stone-500: #64748b;
+
+      --color-vault-900: #060a10;
+      --color-vault-950: #040710;
+
+      --font-serif:    "Playfair Display", "Noto Serif KR", serif;
+      --font-serif-kr: "Noto Serif KR", serif;
+      --font-sans:     "Inter", sans-serif;
+    }
+  </style>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #060a10;
+      color: #d9e4ef;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Ledger-line grid overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(45,97,138,0.06) 1px, transparent 1px);
+      background-size: 100% 28px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Fine grain ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Particle layer ── */
+    #particle-layer {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 1; overflow: hidden;
+    }
+    .particle {
+      position: absolute; opacity: 0;
+      animation: drift var(--dur,12s) ease-in-out infinite;
+      animation-delay: var(--delay,0s);
+    }
+    @keyframes drift {
+      0%   { transform: translateY(0) translateX(0) rotate(0deg);   opacity: 0; }
+      15%  { opacity: var(--mop,0.35); }
+      85%  { opacity: var(--mop,0.20); }
+      100% { transform: translateY(var(--ty,-80px)) translateX(var(--tx,20px)) rotate(var(--rot,90deg)); opacity: 0; }
+    }
+
+    /* ── Deep navy vignette ── */
+    .navy-vignette {
+      position: fixed; top: 0; left: 0; right: 0; height: 50vh;
+      background: radial-gradient(ellipse 70% 45% at 50% 0%,
+        rgba(47,97,138,0.18) 0%,
+        rgba(29,61,92,0.10) 40%,
+        transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ── Brass rule top line ── */
+    .brass-rule {
+      position: fixed; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #b8962e 20%, #d4b870 50%, #b8962e 80%, transparent 100%);
+      z-index: 20; opacity: 0.8;
+    }
+
+    /* ── Shimmer — navy-brass ── */
+    .shimmer-text {
+      background: linear-gradient(90deg,
+        #7da4c4 0%, #d4b870 22%, #b3c9df 44%, #b8962e 66%, #7da4c4 88%, #d4b870 100%);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 7s linear infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* ── Cards ── */
+    .istj-card {
+      background: rgba(255,255,255,0.028);
+      border: 1px solid rgba(77,127,168,0.18);
+      border-radius: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .istj-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(47,97,138,0.18);
+      border-color: rgba(212,184,112,0.32);
+    }
+
+    /* ── Link buttons ── */
+    .link-btn {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; padding: 13px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.028);
+      border: 1px solid rgba(77,127,168,0.18);
+      color: #d9e4ef; text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem; font-weight: 500;
+      transition: all 0.22s ease; cursor: pointer;
+    }
+    .link-btn:hover {
+      background: rgba(47,97,138,0.14);
+      border-color: rgba(212,184,112,0.38);
+      transform: translateX(5px);
+      box-shadow: 0 0 18px rgba(47,97,138,0.18);
+    }
+    .link-btn .btn-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+
+    /* ── Avatar ── */
+    .avatar-wrap { position: relative; display: inline-block; }
+    .avatar-ring {
+      position: absolute; inset: -5px; border-radius: 50%;
+      background: conic-gradient(#2f618a,#d4b870,#1d3d5c,#34d399,#2f618a);
+      animation: spin-slow 10s linear infinite; z-index: -1;
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    .avatar-img {
+      width: 92px; height: 92px; border-radius: 50%;
+      border: 3px solid #060a10;
+      position: relative; z-index: 1; display: block;
+    }
+    .status-dot {
+      width: 14px; height: 14px; background: #34d399;
+      border-radius: 50%; border: 3px solid #060a10;
+      position: absolute; bottom: 4px; right: 4px; z-index: 2;
+      animation: pulse-dot 4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.55); }
+      50%      { box-shadow: 0 0 0 7px rgba(52,211,153,0); }
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Progress bars ── */
+    .bar-track {
+      height: 5px; background: rgba(255,255,255,0.07);
+      border-radius: 99px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 99px; width: 0%;
+      transition: width 1.6s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* ── Timeline ── */
+    .timeline-item {
+      position: relative;
+      padding-left: 28px;
+      padding-bottom: 20px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: 7px; top: 8px; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(212,184,112,0.5), transparent);
+    }
+    .timeline-item::after {
+      content: '';
+      position: absolute; left: 2px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #d4b870;
+      box-shadow: 0 0 8px rgba(212,184,112,0.6);
+    }
+    .timeline-item:last-child::before { display: none; }
+
+    /* ── Carousel ── */
+    .carousel-wrap { position: relative; overflow: hidden; border-radius: 12px; }
+    .carousel-track { display: flex; transition: transform 0.48s ease; }
+    .carousel-slide { min-width: 100%; position: relative; }
+    .carousel-slide img { width: 100%; height: 232px; object-fit: cover; display: block; }
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 34px; height: 34px;
+      background: rgba(6,10,16,0.65);
+      border: 1px solid rgba(212,184,112,0.35);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #d9e4ef; font-size: 0.95rem;
+      transition: background 0.2s; z-index: 10;
+    }
+    .carousel-btn:hover { background: rgba(47,97,138,0.45); }
+    .carousel-prev { left: 10px; }
+    .carousel-next { right: 10px; }
+    .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+    .carousel-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.18); cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .carousel-dot.active { background: #d4b870; transform: scale(1.4); }
+
+    /* ── Music player ── */
+    .vinyl {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: conic-gradient(
+        #070d18 0deg 30deg,  #0f1e30 30deg 60deg,
+        #070d18 60deg 90deg, #0f1e30 90deg 120deg,
+        #070d18 120deg 150deg,#0f1e30 150deg 180deg,
+        #070d18 180deg 210deg,#0f1e30 210deg 240deg,
+        #070d18 240deg 270deg,#0f1e30 270deg 300deg,
+        #070d18 300deg 330deg,#0f1e30 330deg 360deg);
+      box-shadow: 0 0 0 7px #060a10, 0 0 0 9px rgba(212,184,112,0.22);
+      position: relative; flex-shrink: 0;
+    }
+    .vinyl::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #d4b870; box-shadow: 0 0 10px rgba(212,184,112,0.7);
+    }
+    .vinyl-spin { animation: spin 5s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.09); border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg,#2f618a,#d4b870); border-radius: 99px; width: 0%; }
+    .progress-anim { animation: pgrow 180s linear forwards; }
+    @keyframes pgrow { from { width:0%; } to { width:100%; } }
+
+    /* ── Tags ── */
+    .tag-pill {
+      display: inline-block; padding: 4px 11px; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 600; border: 1px solid;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    /* ── FAQ ── */
+    details summary { cursor: pointer; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-arrow { transform: rotate(180deg); }
+    .faq-arrow { transition: transform 0.3s; display: inline-block; }
+
+    /* ── Forms ── */
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(77,127,168,0.20);
+      border-radius: 8px; padding: 10px 13px;
+      color: #d9e4ef; font-family: 'Inter',sans-serif;
+      font-size: 0.85rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: rgba(212,184,112,0.55); }
+    .form-input::placeholder { color: rgba(217,228,239,0.25); }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(212,184,112,0.72);
+      margin-bottom: 12px;
+    }
+
+    /* ── Section divider ── */
+    .brass-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,184,112,0.35), transparent);
+      margin: 8px 0 20px;
+    }
+
+    /* ── Feature image hover ── */
+    .spotlight-hover { position: relative; overflow: hidden; border-radius: 12px; cursor: pointer; }
+    .spotlight-hover img { width: 100%; height: 196px; object-fit: cover; display: block; transition: transform 0.45s ease; }
+    .spotlight-hover:hover img { transform: scale(1.04); }
+    .spotlight-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,rgba(6,10,16,0.80) 0%,transparent 55%);
+      display: flex; align-items: flex-end; padding: 14px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .spotlight-hover:hover .spotlight-overlay { opacity: 1; }
+
+    /* ── Ornamental SVG corners ── */
+    .corner-deco {
+      position: fixed; pointer-events: none; z-index: 1; opacity: 0.15;
+    }
+
+    /* ── Duty checklist item ── */
+    .check-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(77,127,168,0.10);
+    }
+    .check-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .check-box {
+      width: 18px; height: 18px; border-radius: 3px; flex-shrink: 0;
+      border: 1.5px solid rgba(212,184,112,0.45);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Brass rule -->
+  <div class="brass-rule"></div>
+
+  <!-- Navy vignette -->
+  <div class="navy-vignette"></div>
+
+  <!-- Ornamental corners -->
+  <svg class="corner-deco" style="top:8px;left:8px;width:100px;height:100px;" viewBox="0 0 100 100">
+    <path d="M2 50 L2 2 L50 2" fill="none" stroke="#d4b870" stroke-width="1.5"/>
+    <path d="M2 70 L2 2 L70 2" fill="none" stroke="#d4b870" stroke-width="0.6"/>
+    <rect x="0" y="0" width="6" height="6" fill="none" stroke="#d4b870" stroke-width="1"/>
+    <line x1="10" y1="2" x2="24" y2="2" stroke="#d4b870" stroke-width="0.6"/>
+    <line x1="2" y1="10" x2="2" y2="24" stroke="#d4b870" stroke-width="0.6"/>
+  </svg>
+  <svg class="corner-deco" style="top:8px;right:8px;width:100px;height:100px;transform:scaleX(-1);" viewBox="0 0 100 100">
+    <path d="M2 50 L2 2 L50 2" fill="none" stroke="#d4b870" stroke-width="1.5"/>
+    <path d="M2 70 L2 2 L70 2" fill="none" stroke="#d4b870" stroke-width="0.6"/>
+    <rect x="0" y="0" width="6" height="6" fill="none" stroke="#d4b870" stroke-width="1"/>
+  </svg>
+  <svg class="corner-deco" style="bottom:8px;left:8px;width:100px;height:100px;transform:scaleY(-1);" viewBox="0 0 100 100">
+    <path d="M2 50 L2 2 L50 2" fill="none" stroke="#2f618a" stroke-width="1.5"/>
+    <path d="M2 70 L2 2 L70 2" fill="none" stroke="#2f618a" stroke-width="0.6"/>
+    <rect x="0" y="0" width="6" height="6" fill="none" stroke="#2f618a" stroke-width="1"/>
+  </svg>
+  <svg class="corner-deco" style="bottom:8px;right:8px;width:100px;height:100px;transform:scale(-1,-1);" viewBox="0 0 100 100">
+    <path d="M2 50 L2 2 L50 2" fill="none" stroke="#2f618a" stroke-width="1.5"/>
+    <rect x="0" y="0" width="6" height="6" fill="none" stroke="#2f618a" stroke-width="1"/>
+  </svg>
+
+  <!-- Particle layer -->
+  <div id="particle-layer"></div>
+
+  <!-- ════════════════════════════════
+       MAIN WRAPPER
+  ════════════════════════════════ -->
+  <div style="position:relative;z-index:2;max-width:480px;margin:0 auto;padding:28px 16px 64px;">
+
+    <!-- ══════════════
+         HERO
+    ══════════════ -->
+    <section style="text-align:center;padding:46px 0 32px;" class="reveal">
+
+      <!-- Epigraph -->
+      <p style="font-family:'Playfair Display',serif;font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(212,184,112,0.45);margin-bottom:20px;">
+        Duty · Order · Truth
+      </p>
+
+      <!-- Avatar -->
+      <div class="avatar-wrap" style="margin-bottom:20px;display:inline-block;">
+        <div class="avatar-ring"></div>
+        <img
+          class="avatar-img"
+          src="https://api.dicebear.com/9.x/shapes/svg?seed=istj&backgroundColor=060a10&color=2f618a,d4b870,34d399,1d3d5c"
+          alt="ISTJ Avatar"
+        />
+        <div class="status-dot"></div>
+      </div>
+
+      <!-- Title -->
+      <h1 class="shimmer-text" style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;letter-spacing:0.14em;margin-bottom:6px;line-height:1.1;">
+        ISTJ
+      </h1>
+      <p style="font-family:'Playfair Display',serif;font-size:0.8rem;color:rgba(217,228,239,0.40);letter-spacing:0.16em;margin-bottom:14px;">
+        istj.kr · The Logistician
+      </p>
+
+      <div class="brass-divider"></div>
+
+      <!-- Quote -->
+      <p style="font-family:'Noto Serif KR',serif;font-size:1rem;color:rgba(217,228,239,0.80);line-height:1.8;margin-bottom:20px;padding:0 8px;">
+        "약속은 지키기 위해 하는 것이다. 원칙은 편할 때만 따르는 게 아니다."
+      </p>
+
+      <!-- Tags -->
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:24px;">
+        <span class="tag-pill" style="background:rgba(47,97,138,0.15);border-color:rgba(77,127,168,0.35);color:#7da4c4;">📋 로지스티션</span>
+        <span class="tag-pill" style="background:rgba(212,184,112,0.12);border-color:rgba(212,184,112,0.30);color:#d4b870;">🏛️ 원칙</span>
+        <span class="tag-pill" style="background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.28);color:#34d399;">✅ 신뢰</span>
+        <span class="tag-pill" style="background:rgba(148,163,184,0.12);border-color:rgba(148,163,184,0.28);color:#94a3b8;">📐 정확</span>
+        <span class="tag-pill" style="background:rgba(29,61,92,0.25);border-color:rgba(77,127,168,0.28);color:#7da4c4;">🗂️ 질서</span>
+      </div>
+
+      <!-- I·S·T·J Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
+        <div class="istj-card" style="padding:13px 6px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#4d7fa8;">I</div>
+          <div style="font-size:0.6rem;color:rgba(217,228,239,0.38);margin-top:4px;letter-spacing:0.05em;">내향</div>
+        </div>
+        <div class="istj-card" style="padding:13px 6px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#d4b870;">S</div>
+          <div style="font-size:0.6rem;color:rgba(217,228,239,0.38);margin-top:4px;letter-spacing:0.05em;">감각</div>
+        </div>
+        <div class="istj-card" style="padding:13px 6px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#7da4c4;">T</div>
+          <div style="font-size:0.6rem;color:rgba(217,228,239,0.38);margin-top:4px;letter-spacing:0.05em;">사고</div>
+        </div>
+        <div class="istj-card" style="padding:13px 6px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#34d399;">J</div>
+          <div style="font-size:0.6rem;color:rgba(217,228,239,0.38);margin-top:4px;letter-spacing:0.05em;">판단</div>
+        </div>
+      </div>
+      <p style="font-size:0.62rem;color:rgba(217,228,239,0.20);text-align:center;letter-spacing:0.10em;">
+        Introverted · Sensing · Thinking · Judging
+      </p>
+    </section>
+
+    <!-- ══════════════
+         ANNOUNCEMENT
+    ══════════════ -->
+    <section style="margin-bottom:24px;" class="reveal">
+      <div style="
+        background:linear-gradient(135deg,rgba(47,97,138,0.14) 0%,rgba(212,184,112,0.08) 100%);
+        border:1px solid rgba(212,184,112,0.25);
+        border-radius:11px;padding:15px 18px;
+        display:flex;align-items:center;gap:13px;
+      ">
+        <span style="font-size:1.4rem;flex-shrink:0;">📜</span>
+        <div>
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#d4b870;letter-spacing:0.04em;margin-bottom:3px;">New Record: Logistician Vol.4</p>
+          <p style="font-size:0.76rem;color:rgba(217,228,239,0.50);">기록되어야 할 것들 — 새 아카이브가 열렸습니다</p>
+        </div>
+        <span style="margin-left:auto;font-size:0.72rem;color:rgba(212,184,112,0.55);flex-shrink:0;">→</span>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         SOCIAL LINKS
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Connect</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+
+        <a href="#" class="link-btn">
+          <span class="btn-icon" style="background:linear-gradient(135deg,#e1306c,#833ab4);">
+            <svg width="17" height="17" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </span>
+          <span style="flex:1;">Instagram</span>
+          <span style="font-size:0.72rem;color:rgba(217,228,239,0.28);">@istj.kr</span>
+        </a>
+
+        <a href="#" class="link-btn">
+          <span class="btn-icon" style="background:#ff0000;">
+            <svg width="17" height="17" fill="white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </span>
+          <span style="flex:1;">YouTube</span>
+          <span style="font-size:0.72rem;color:rgba(217,228,239,0.28);">ISTJ Archive</span>
+        </a>
+
+        <a href="#" class="link-btn">
+          <span class="btn-icon" style="background:#000;">
+            <svg width="17" height="17" fill="white" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </span>
+          <span style="flex:1;">X (Twitter)</span>
+          <span style="font-size:0.72rem;color:rgba(217,228,239,0.28);">@istj_kr</span>
+        </a>
+
+        <a href="#" class="link-btn">
+          <span class="btn-icon" style="background:#24292e;">
+            <svg width="17" height="17" fill="white" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </span>
+          <span style="flex:1;">GitHub</span>
+          <span style="font-size:0.72rem;color:rgba(217,228,239,0.28);">istj-kr</span>
+        </a>
+
+        <a href="mailto:hello@istj.kr" class="link-btn">
+          <span class="btn-icon" style="background:linear-gradient(135deg,#2f618a,#d4b870);">✉️</span>
+          <span style="flex:1;">Email</span>
+          <span style="font-size:0.72rem;color:rgba(217,228,239,0.28);">hello@istj.kr</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ══════════════
+         CORE PRINCIPLES (traits with bars)
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Core Principles</p>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+
+        <div class="istj-card" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px;">
+            <span style="font-size:1.25rem;">📋</span>
+            <div>
+              <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#7da4c4;">Reliability · 신뢰성</p>
+              <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);">한 번 맡은 것은 반드시 완수한다</p>
+            </div>
+            <span style="margin-left:auto;font-size:0.78rem;color:#7da4c4;font-weight:600;">97%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="--w:97%;background:linear-gradient(90deg,#2f618a,#4d7fa8);"></div>
+          </div>
+        </div>
+
+        <div class="istj-card" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px;">
+            <span style="font-size:1.25rem;">📐</span>
+            <div>
+              <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#d4b870;">Precision · 정밀함</p>
+              <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);">디테일이 전체를 결정한다</p>
+            </div>
+            <span style="margin-left:auto;font-size:0.78rem;color:#d4b870;font-weight:600;">95%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="--w:95%;background:linear-gradient(90deg,#b8962e,#d4b870);"></div>
+          </div>
+        </div>
+
+        <div class="istj-card" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px;">
+            <span style="font-size:1.25rem;">🏛️</span>
+            <div>
+              <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#34d399;">Integrity · 성실함</p>
+              <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);">원칙은 상황이 어려울 때 빛난다</p>
+            </div>
+            <span style="margin-left:auto;font-size:0.78rem;color:#34d399;font-weight:600;">98%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="--w:98%;background:linear-gradient(90deg,#10b981,#34d399);"></div>
+          </div>
+        </div>
+
+        <div class="istj-card" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px;">
+            <span style="font-size:1.25rem;">🗂️</span>
+            <div>
+              <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#94a3b8;">Order · 체계와 질서</p>
+              <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);">구조 없이는 발전도 없다</p>
+            </div>
+            <span style="margin-left:auto;font-size:0.78rem;color:#94a3b8;font-weight:600;">93%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="--w:93%;background:linear-gradient(90deg,#475569,#94a3b8);"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════
+         DUTY CHECKLIST (unique ISTJ section)
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Today's Duty Log</p>
+      <div class="istj-card" style="padding:16px 18px;">
+        <div class="check-item">
+          <div class="check-box"><span style="color:#34d399;font-size:0.7rem;">✓</span></div>
+          <div>
+            <p style="font-size:0.82rem;font-weight:500;color:#d9e4ef;">모든 프로젝트 마감 기한 준수</p>
+            <p style="font-size:0.7rem;color:rgba(217,228,239,0.38);margin-top:2px;">완료 · 09:00</p>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><span style="color:#34d399;font-size:0.7rem;">✓</span></div>
+          <div>
+            <p style="font-size:0.82rem;font-weight:500;color:#d9e4ef;">주간 보고서 검토 및 제출</p>
+            <p style="font-size:0.7rem;color:rgba(217,228,239,0.38);margin-top:2px;">완료 · 11:30</p>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><span style="color:#34d399;font-size:0.7rem;">✓</span></div>
+          <div>
+            <p style="font-size:0.82rem;font-weight:500;color:#d9e4ef;">시스템 일관성 점검</p>
+            <p style="font-size:0.7rem;color:rgba(217,228,239,0.38);margin-top:2px;">완료 · 14:15</p>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" style="border-color:rgba(212,184,112,0.55);"></div>
+          <div>
+            <p style="font-size:0.82rem;font-weight:500;color:rgba(217,228,239,0.55);">월간 아카이브 정리</p>
+            <p style="font-size:0.7rem;color:rgba(217,228,239,0.28);margin-top:2px;">대기 중 · 17:00</p>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box" style="border-color:rgba(212,184,112,0.55);"></div>
+          <div>
+            <p style="font-size:0.82rem;font-weight:500;color:rgba(217,228,239,0.55);">다음 분기 계획 수립</p>
+            <p style="font-size:0.7rem;color:rgba(217,228,239,0.28);margin-top:2px;">대기 중 · 18:00</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         FEATURED VIDEO
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Featured Record</p>
+      <div class="istj-card" style="overflow:hidden;padding:0;">
+        <div style="position:relative;padding-bottom:56.25%;height:0;">
+          <iframe
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="ISTJ Featured Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div style="padding:13px 15px;">
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.88rem;color:#d4b870;margin-bottom:4px;">📋 The Logistician's Method — 원칙으로 쌓은 세계</p>
+          <div style="display:flex;align-items:center;gap:11px;">
+            <span style="font-size:0.7rem;color:rgba(217,228,239,0.35);">👁 28.4K</span>
+            <span style="font-size:0.7rem;color:rgba(217,228,239,0.35);">❤️ 3.2K</span>
+            <span style="margin-left:auto;font-family:'Playfair Display',serif;font-size:0.68rem;color:rgba(212,184,112,0.50);">ISTJ.kr</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         VIDEO PLAYLIST
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Archive Playlist</p>
+      <div class="istj-card" style="padding:7px;">
+        <div style="display:flex;flex-direction:column;gap:1px;">
+
+          <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:8px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(47,97,138,0.10)'" onmouseout="this.style.background='transparent'">
+            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg" alt="" style="width:62px;height:46px;object-fit:cover;border-radius:6px;flex-shrink:0;" />
+            <div style="flex:1;min-width:0;">
+              <p style="font-size:0.8rem;font-weight:500;color:#d9e4ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">규칙이 자유를 만드는 방법</p>
+              <p style="font-size:0.7rem;color:rgba(217,228,239,0.32);margin-top:2px;">22.1K · 11:08</p>
+            </div>
+            <span style="font-size:0.9rem;color:rgba(212,184,112,0.55);flex-shrink:0;">▶</span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:8px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(47,97,138,0.10)'" onmouseout="this.style.background='transparent'">
+            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg" alt="" style="width:62px;height:46px;object-fit:cover;border-radius:6px;flex-shrink:0;" />
+            <div style="flex:1;min-width:0;">
+              <p style="font-size:0.8rem;font-weight:500;color:#d9e4ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">조용한 사람이 가장 많이 한다</p>
+              <p style="font-size:0.7rem;color:rgba(217,228,239,0.32);margin-top:2px;">18.7K · 9:33</p>
+            </div>
+            <span style="font-size:0.9rem;color:rgba(212,184,112,0.55);flex-shrink:0;">▶</span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:8px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(47,97,138,0.10)'" onmouseout="this.style.background='transparent'">
+            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg" alt="" style="width:62px;height:46px;object-fit:cover;border-radius:6px;flex-shrink:0;" />
+            <div style="flex:1;min-width:0;">
+              <p style="font-size:0.8rem;font-weight:500;color:#d9e4ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ISTJ의 시스템 — 완벽한 루틴 만들기</p>
+              <p style="font-size:0.7rem;color:rgba(217,228,239,0.32);margin-top:2px;">12.9K · 8:47</p>
+            </div>
+            <span style="font-size:0.9rem;color:rgba(212,184,112,0.55);flex-shrink:0;">▶</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         IMAGE CAROUSEL
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Gallery</p>
+      <div class="carousel-wrap" id="carousel">
+        <div class="carousel-track" id="carouselTrack">
+
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=480&q=80" alt="Order" />
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:11px 14px;background:linear-gradient(to top,rgba(6,10,16,0.80),transparent);">
+              <p style="font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:600;color:#d9e4ef;">📐 질서와 구조</p>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&q=80" alt="Discipline" />
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:11px 14px;background:linear-gradient(to top,rgba(6,10,16,0.80),transparent);">
+              <p style="font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:600;color:#d9e4ef;">🏛️ 규율과 원칙</p>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=480&q=80" alt="Trust" />
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:11px 14px;background:linear-gradient(to top,rgba(6,10,16,0.80),transparent);">
+              <p style="font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:600;color:#d9e4ef;">🤝 신뢰와 책임</p>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=480&q=80" alt="Workspace" />
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:11px 14px;background:linear-gradient(to top,rgba(6,10,16,0.80),transparent);">
+              <p style="font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:600;color:#d9e4ef;">🗂️ 정돈된 작업 공간</p>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=480&q=80" alt="Records" />
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:11px 14px;background:linear-gradient(to top,rgba(6,10,16,0.80),transparent);">
+              <p style="font-family:'Playfair Display',serif;font-size:0.8rem;font-weight:600;color:#d9e4ef;">📋 기록과 아카이브</p>
+            </div>
+          </div>
+
+        </div>
+        <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Previous">‹</button>
+        <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Next">›</button>
+      </div>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </section>
+
+    <!-- ══════════════
+         FEATURE IMAGE
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Spotlight</p>
+      <div class="spotlight-hover istj-card" style="border:0;">
+        <img src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=480&q=80" alt="ISTJ Spotlight" style="height:196px;" />
+        <div class="spotlight-overlay">
+          <span style="font-family:'Playfair Display',serif;font-size:0.82rem;font-weight:600;color:#d9e4ef;background:rgba(47,97,138,0.72);padding:5px 14px;border-radius:4px;">아카이브 열람 →</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         TIMELINE (unique ISTJ section)
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Milestone Log</p>
+      <div class="istj-card" style="padding:18px 20px 6px;">
+        <div class="timeline-item">
+          <p style="font-size:0.82rem;font-weight:600;color:#d4b870;margin-bottom:3px;">첫 번째 시스템 구축</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.45);line-height:1.6;">모든 것은 체계에서 시작된다. 첫 완전한 프레임워크 완성.</p>
+          <p style="font-size:0.65rem;color:rgba(212,184,112,0.40);margin-top:4px;">2024 · Q1</p>
+        </div>
+        <div class="timeline-item">
+          <p style="font-size:0.82rem;font-weight:600;color:#7da4c4;margin-bottom:3px;">100일 루틴 달성</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.45);line-height:1.6;">예외 없는 100일. ISTJ에게 습관은 선택이 아닌 정체성이다.</p>
+          <p style="font-size:0.65rem;color:rgba(212,184,112,0.40);margin-top:4px;">2024 · Q3</p>
+        </div>
+        <div class="timeline-item">
+          <p style="font-size:0.82rem;font-weight:600;color:#34d399;margin-bottom:3px;">아카이브 프로젝트 런칭</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.45);line-height:1.6;">기록은 미래를 위한 투자다. istj.kr 공식 오픈.</p>
+          <p style="font-size:0.65rem;color:rgba(212,184,112,0.40);margin-top:4px;">2025 · Q2</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         MUSIC PLAYER
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Now Playing</p>
+      <div class="istj-card" style="padding:18px;">
+        <div style="display:flex;align-items:center;gap:15px;margin-bottom:13px;">
+          <div class="vinyl" id="vinyl"></div>
+          <div style="flex:1;min-width:0;">
+            <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.9rem;color:#d4b870;margin-bottom:2px;">Steadfast</p>
+            <p style="font-size:0.72rem;color:rgba(217,228,239,0.40);margin-bottom:7px;">ISTJ Concerto Vol.4</p>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+          </div>
+          <button onclick="toggleMusic()" id="playBtn" style="
+            width:40px;height:40px;border-radius:50%;
+            background:linear-gradient(135deg,#2f618a,#d4b870);
+            border:none;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            font-size:1rem;flex-shrink:0;
+            box-shadow:0 0 14px rgba(47,97,138,0.40);
+            transition:transform 0.2s;
+          ">▶</button>
+        </div>
+        <div style="border-top:1px solid rgba(77,127,168,0.12);padding-top:11px;display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'Playfair Display',serif;font-size:0.75rem;color:rgba(217,228,239,0.55);">1. Steadfast</span>
+            <span style="font-size:0.7rem;color:#d4b870;">4:22</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'Playfair Display',serif;font-size:0.75rem;color:rgba(217,228,239,0.32);">2. Principled</span>
+            <span style="font-size:0.7rem;color:rgba(217,228,239,0.28);">5:07</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'Playfair Display',serif;font-size:0.75rem;color:rgba(217,228,239,0.32);">3. The Long Game</span>
+            <span style="font-size:0.7rem;color:rgba(217,228,239,0.28);">6:14</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         PROJECT CARDS
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Projects</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+
+        <div class="istj-card" style="padding:15px;">
+          <span style="font-size:1.35rem;display:block;margin-bottom:7px;">📁</span>
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.82rem;color:#7da4c4;margin-bottom:3px;">Order Archive</p>
+          <p style="font-size:0.7rem;color:rgba(217,228,239,0.40);line-height:1.5;">체계적으로 정리된 지식의 서고</p>
+        </div>
+
+        <div class="istj-card" style="padding:15px;">
+          <span style="font-size:1.35rem;display:block;margin-bottom:7px;">📊</span>
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.82rem;color:#d4b870;margin-bottom:3px;">Duty Ledger</p>
+          <p style="font-size:0.7rem;color:rgba(217,228,239,0.40);line-height:1.5;">약속과 책임의 정밀 기록부</p>
+        </div>
+
+        <div class="istj-card" style="padding:15px;">
+          <span style="font-size:1.35rem;display:block;margin-bottom:7px;">🔒</span>
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.82rem;color:#34d399;margin-bottom:3px;">Trust Vault</p>
+          <p style="font-size:0.7rem;color:rgba(217,228,239,0.40);line-height:1.5;">신뢰 기반 시스템 설계 프레임</p>
+        </div>
+
+        <div class="istj-card" style="padding:15px;">
+          <span style="font-size:1.35rem;display:block;margin-bottom:7px;">🗓️</span>
+          <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:0.82rem;color:#94a3b8;margin-bottom:3px;">Long Game</p>
+          <p style="font-size:0.7rem;color:rgba(217,228,239,0.40);line-height:1.5;">장기 목표와 점진적 성취 추적</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════
+         RECENT POSTS
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <p class="section-label" style="margin-bottom:0;">— Recent Records</p>
+        <a href="#" style="font-family:'Playfair Display',serif;font-size:0.7rem;color:rgba(212,184,112,0.55);text-decoration:none;letter-spacing:0.06em;">All →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+
+        <div class="istj-card" style="padding:13px 15px;cursor:pointer;">
+          <p style="font-family:'Noto Serif KR',serif;font-size:0.84rem;font-weight:600;color:#d9e4ef;margin-bottom:5px;">완벽한 루틴이 완벽한 결과를 만든다</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);line-height:1.6;">ISTJ는 하루를 설계한다. 감정이 아닌 구조로 움직이는 삶의 방식.</p>
+          <div style="display:flex;gap:7px;margin-top:7px;align-items:center;">
+            <span class="tag-pill" style="background:rgba(47,97,138,0.14);border-color:rgba(77,127,168,0.28);color:#7da4c4;font-size:0.6rem;">루틴</span>
+            <span style="font-size:0.62rem;color:rgba(217,228,239,0.24);margin-left:auto;letter-spacing:0.04em;">2026.02.21</span>
+          </div>
+        </div>
+
+        <div class="istj-card" style="padding:13px 15px;cursor:pointer;">
+          <p style="font-family:'Noto Serif KR',serif;font-size:0.84rem;font-weight:600;color:#d9e4ef;margin-bottom:5px;">신뢰는 쌓는 데 10년, 무너지는 데 10초</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);line-height:1.6;">ISTJ가 약속을 목숨처럼 여기는 이유 — 신뢰는 자산이다.</p>
+          <div style="display:flex;gap:7px;margin-top:7px;align-items:center;">
+            <span class="tag-pill" style="background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.25);color:#34d399;font-size:0.6rem;">신뢰</span>
+            <span style="font-size:0.62rem;color:rgba(217,228,239,0.24);margin-left:auto;letter-spacing:0.04em;">2026.02.16</span>
+          </div>
+        </div>
+
+        <div class="istj-card" style="padding:13px 15px;cursor:pointer;">
+          <p style="font-family:'Noto Serif KR',serif;font-size:0.84rem;font-weight:600;color:#d9e4ef;margin-bottom:5px;">기록하지 않으면 존재하지 않는다</p>
+          <p style="font-size:0.72rem;color:rgba(217,228,239,0.42);line-height:1.6;">ISTJ의 아카이브 철학 — 모든 데이터는 미래의 나에게 보내는 편지다.</p>
+          <div style="display:flex;gap:7px;margin-top:7px;align-items:center;">
+            <span class="tag-pill" style="background:rgba(212,184,112,0.10);border-color:rgba(212,184,112,0.25);color:#d4b870;font-size:0.6rem;">기록</span>
+            <span style="font-size:0.62km;color:rgba(217,228,239,0.24);margin-left:auto;letter-spacing:0.04em;">2026.02.10</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════
+         FAQ
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— FAQ</p>
+      <div class="istj-card" style="padding:7px;display:flex;flex-direction:column;gap:2px;">
+
+        <details style="border-radius:8px;overflow:hidden;">
+          <summary style="padding:13px 14px;font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:500;color:#d9e4ef;display:flex;justify-content:space-between;align-items:center;">
+            <span>ISTJ는 어떤 유형인가요?</span>
+            <span class="faq-arrow" style="color:#d4b870;font-size:0.72rem;">▼</span>
+          </summary>
+          <div style="padding:0 14px 12px;font-size:0.76rem;color:rgba(217,228,239,0.52);line-height:1.8;">
+            ISTJ는 내향(I)·감각(S)·사고(T)·판단(J)의 조합으로, 전체 인구 중 약 11~14%로 16가지 유형 중 가장 흔한 유형 중 하나입니다. "로지스티션" 또는 "감찰관"이라는 별명처럼 신뢰·정확·체계를 삶의 핵심 원칙으로 삼습니다.
+          </div>
+        </details>
+
+        <details style="border-radius:8px;overflow:hidden;">
+          <summary style="padding:13px 14px;font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:500;color:#d9e4ef;display:flex;justify-content:space-between;align-items:center;">
+            <span>ISTJ의 핵심 강점은 무엇인가요?</span>
+            <span class="faq-arrow" style="color:#d4b870;font-size:0.72rem;">▼</span>
+          </summary>
+          <div style="padding:0 14px 12px;font-size:0.76rem;color:rgba(217,228,239,0.52);line-height:1.8;">
+            탁월한 신뢰성, 세심한 디테일 처리 능력, 장기적 사고와 계획 실행력이 핵심 강점입니다. 한 번 맡은 일은 반드시 완수하며, 규칙과 시스템을 통해 조직 전체의 안정성을 보장합니다.
+          </div>
+        </details>
+
+        <details style="border-radius:8px;overflow:hidden;">
+          <summary style="padding:13px 14px;font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:500;color:#d9e4ef;display:flex;justify-content:space-between;align-items:center;">
+            <span>istj.kr에 연락하려면?</span>
+            <span class="faq-arrow" style="color:#d4b870;font-size:0.72rem;">▼</span>
+          </summary>
+          <div style="padding:0 14px 12px;font-size:0.76rem;color:rgba(217,228,239,0.52);line-height:1.8;">
+            <a href="mailto:hello@istj.kr" style="color:#d4b870;text-decoration:none;">hello@istj.kr</a>로 이메일을 보내거나 아래 연락 폼을 이용해 주세요. 명확하고 간결한 메시지를 선호합니다.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- ══════════════
+         NEWSLETTER
+    ══════════════ -->
+    <section style="margin-bottom:32px;" class="reveal">
+      <p class="section-label">— Subscribe</p>
+      <div class="istj-card" style="padding:20px 18px;">
+        <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#d4b870;margin-bottom:5px;">정기 보고서 구독하기</p>
+        <p style="font-size:0.76rem;color:rgba(217,228,239,0.42);margin-bottom:14px;line-height:1.68;">비공개 분석 노트, 시스템 설계 기록, ISTJ 원칙 아카이브를 정기적으로 전달해 드립니다.</p>
+        <div id="subForm" style="display:flex;flex-direction:column;gap:9px;">
+          <input type="email" id="subEmail" placeholder="your@email.com" class="form-input" />
+          <button onclick="doSubscribe()" style="
+            padding:10px;border-radius:8px;
+            background:linear-gradient(135deg,#2f618a,#d4b870);
+            border:none;cursor:pointer;
+            font-family:'Playfair Display',serif;
+            font-weight:600;font-size:0.9rem;letter-spacing:0.04em;color:#060a10;
+            transition:opacity 0.2s;
+          " onmouseover="this.style.opacity='0.82'" onmouseout="this.style.opacity='1'">
+            📋 아카이브 구독하기
+          </button>
+        </div>
+        <div id="subSuccess" style="display:none;text-align:center;padding:11px;">
+          <p style="font-family:'Playfair Display',serif;font-size:0.85rem;color:#34d399;">✓ 등록 완료 — 다음 보고서에서 뵙겠습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         CONTACT FORM
+    ══════════════ -->
+    <section style="margin-bottom:40px;" class="reveal">
+      <p class="section-label">— Contact</p>
+      <div class="istj-card" style="padding:20px 18px;">
+        <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#d4b870;margin-bottom:5px;">공식 채널로 연락하기</p>
+        <p style="font-size:0.76rem;color:rgba(217,228,239,0.42);margin-bottom:14px;line-height:1.68;">협업, 자문, 또는 단순한 문의 — 명확한 목적을 담아 보내주세요.</p>
+        <div id="contactForm" style="display:flex;flex-direction:column;gap:9px;">
+          <input type="text"  id="contactName"  placeholder="성명" class="form-input" />
+          <input type="email" id="contactEmail" placeholder="이메일 주소" class="form-input" />
+          <select id="contactTopic" class="form-input" style="appearance:none;-webkit-appearance:none;">
+            <option value="" disabled selected style="background:#0c1420;">문의 유형 선택</option>
+            <option value="collab"  style="background:#0c1420;">📁 협업·프로젝트</option>
+            <option value="consult" style="background:#0c1420;">📐 시스템 자문</option>
+            <option value="archive" style="background:#0c1420;">🗂️ 아카이브 관련</option>
+            <option value="media"   style="background:#0c1420;">📋 미디어·기고</option>
+            <option value="other"   style="background:#0c1420;">💬 기타 문의</option>
+          </select>
+          <textarea id="contactMsg" placeholder="문의 내용을 명확하게 작성해 주세요." class="form-input" style="resize:vertical;min-height:88px;"></textarea>
+          <button onclick="doContact()" style="
+            padding:10px;border-radius:8px;
+            background:linear-gradient(135deg,#2f618a,#d4b870);
+            border:none;cursor:pointer;
+            font-family:'Playfair Display',serif;
+            font-weight:600;font-size:0.9rem;letter-spacing:0.04em;color:#060a10;
+            transition:opacity 0.2s;
+          " onmouseover="this.style.opacity='0.82'" onmouseout="this.style.opacity='1'">
+            제출하기 ✓
+          </button>
+        </div>
+        <div id="contactSuccess" style="display:none;text-align:center;padding:13px;">
+          <p style="font-family:'Playfair Display',serif;font-size:0.85rem;color:#34d399;">✓ 접수 완료 — 확인 후 연락드리겠습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════
+         FOOTER
+    ══════════════ -->
+    <footer style="text-align:center;padding-top:22px;border-top:1px solid rgba(212,184,112,0.14);" class="reveal">
+      <div class="brass-divider" style="margin-bottom:16px;"></div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:14px;">
+        <span class="tag-pill" style="background:rgba(47,97,138,0.12);border-color:rgba(77,127,168,0.28);color:#7da4c4;">Introverted</span>
+        <span class="tag-pill" style="background:rgba(212,184,112,0.10);border-color:rgba(212,184,112,0.25);color:#d4b870;">Sensing</span>
+        <span class="tag-pill" style="background:rgba(77,127,168,0.10);border-color:rgba(125,164,196,0.25);color:#7da4c4;">Thinking</span>
+        <span class="tag-pill" style="background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.25);color:#34d399;">Judging</span>
+      </div>
+      <p style="font-family:'Playfair Display',serif;font-size:0.88rem;color:rgba(217,228,239,0.35);margin-bottom:7px;font-style:italic;">
+        "원칙을 지키는 것이 가장 빠른 길이다."
+      </p>
+      <a href="https://istj.kr" style="font-family:'Playfair Display',serif;font-size:0.78rem;font-weight:600;letter-spacing:0.10em;color:#d4b870;text-decoration:none;">istj.kr</a>
+      <div class="brass-divider" style="margin-top:14px;margin-bottom:10px;"></div>
+      <p style="font-size:0.6rem;color:rgba(217,228,239,0.16);letter-spacing:0.08em;">
+        I · S · T · J · Made with Tailwind CSS 4
+      </p>
+    </footer>
+
+  </div><!-- /main wrapper -->
+
+  <script>
+    /* ══ Particles — floating dust motes & rule fragments ══ */
+    (function() {
+      const layer  = document.getElementById('particle-layer');
+      const colors = ['#2f618a','#d4b870','#7da4c4','#34d399','#94a3b8','#4d7fa8','#b8962e'];
+
+      for (let i = 0; i < 44; i++) {
+        const p     = document.createElement('div');
+        p.className = 'particle';
+        const isLine = Math.random() > 0.55;
+        const w     = isLine ? (1 + Math.random()) : (2 + Math.random() * 4);
+        const h     = isLine ? (8 + Math.random() * 18) : w;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const tx    = (Math.random() - 0.5) * 60;
+        const ty    = -(50 + Math.random() * 100);
+        const rot   = isLine ? (Math.random() * 30 - 15) : (Math.random() * 360);
+
+        p.style.cssText = `
+          width:${w}px; height:${h}px;
+          left:${Math.random() * 100}%;
+          top:${15 + Math.random() * 80}%;
+          background:${color};
+          border-radius:${isLine ? '1px' : '50%'};
+          --dur:${10 + Math.random() * 14}s;
+          --delay:${Math.random() * 10}s;
+          --mop:${0.15 + Math.random() * 0.30};
+          --tx:${tx}px;
+          --ty:${ty}px;
+          --rot:${rot}deg;
+          box-shadow:0 0 ${2 + Math.random()*3}px ${color};
+        `;
+        layer.appendChild(p);
+      }
+    })();
+
+    /* ══ Scroll Reveal + Bar Animations ══ */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          e.target.querySelectorAll('.bar-fill').forEach(bar => {
+            const w = bar.style.getPropertyValue('--w');
+            if (w) bar.style.width = w;
+          });
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ══ Carousel ══ */
+    const track    = document.getElementById('carouselTrack');
+    const slides   = track ? track.querySelectorAll('.carousel-slide') : [];
+    const dotsWrap = document.getElementById('carouselDots');
+    let current    = 0, autoTimer, touchStartX = 0;
+
+    if (slides.length) {
+      slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => gotoSlide(i));
+        dotsWrap.appendChild(dot);
+      });
+
+      function gotoSlide(n) {
+        current = (n + slides.length) % slides.length;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) =>
+          d.classList.toggle('active', i === current));
+      }
+
+      function startAuto() { autoTimer = setInterval(() => gotoSlide(current + 1), 5000); }
+      function stopAuto()  { clearInterval(autoTimer); }
+
+      document.getElementById('carouselPrev')?.addEventListener('click', () => { stopAuto(); gotoSlide(current - 1); startAuto(); });
+      document.getElementById('carouselNext')?.addEventListener('click', () => { stopAuto(); gotoSlide(current + 1); startAuto(); });
+
+      const cw = document.getElementById('carousel');
+      cw.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; stopAuto(); }, { passive: true });
+      cw.addEventListener('touchend',   e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 38) gotoSlide(dx < 0 ? current + 1 : current - 1);
+        startAuto();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft')  gotoSlide(current - 1);
+        if (e.key === 'ArrowRight') gotoSlide(current + 1);
+      });
+      cw.addEventListener('mouseenter', stopAuto);
+      cw.addEventListener('mouseleave', startAuto);
+      startAuto();
+    }
+
+    /* ══ Music Player ══ */
+    let playing = false;
+    function toggleMusic() {
+      playing = !playing;
+      const vinyl = document.getElementById('vinyl');
+      const btn   = document.getElementById('playBtn');
+      const prog  = document.getElementById('progressFill');
+      if (playing) {
+        vinyl.classList.add('vinyl-spin');
+        prog.classList.add('progress-anim');
+        btn.textContent = '⏸';
+        btn.style.background = 'linear-gradient(135deg,#d4b870,#2f618a)';
+      } else {
+        vinyl.classList.remove('vinyl-spin');
+        prog.classList.remove('progress-anim');
+        btn.textContent = '▶';
+        btn.style.background = 'linear-gradient(135deg,#2f618a,#d4b870)';
+      }
+    }
+
+    /* ══ Forms ══ */
+    function doSubscribe() {
+      const email = document.getElementById('subEmail').value.trim();
+      if (!email || !email.includes('@')) {
+        document.getElementById('subEmail').style.borderColor = '#ef4444';
+        return;
+      }
+      document.getElementById('subForm').style.display    = 'none';
+      document.getElementById('subSuccess').style.display = 'block';
+    }
+
+    function doContact() {
+      const name  = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const msg   = document.getElementById('contactMsg').value.trim();
+      if (!name || !email || !msg) return;
+      document.getElementById('contactForm').style.display    = 'none';
+      document.getElementById('contactSuccess').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
